@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Menu, X, LogOut, User, Settings, BookOpen } from "lucide-react";
+import UserMenu from "./UserMenu";
 
 export default function Header() {
   const pathname = usePathname();
@@ -75,22 +76,7 @@ export default function Header() {
             {loading ? (
               <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
             ) : isAuthenticated ? (
-              <div className="relative">
-                {/* User dropdown button */}
-                <button
-                  className="flex items-center gap-2 text-sm p-2 rounded-full bg-primary text-primary-foreground"
-                  onClick={() => {
-                    /* Toggle user dropdown */
-                  }}
-                >
-                  <span className="sr-only">Open user menu</span>
-                  <span className="font-medium">
-                    {session?.user?.name?.charAt(0) || "U"}
-                  </span>
-                </button>
-                
-                {/* Dropdown menu would be here */}
-              </div>
+              <UserMenu />
             ) : (
               <>
                 <Link
