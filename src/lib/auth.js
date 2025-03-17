@@ -128,3 +128,31 @@ export function getAuthToken() {
   
   return null;
 }
+
+/**
+ * Kiểm tra xem người dùng đã đăng nhập chưa, nếu chưa thì chuyển hướng đến trang đăng nhập
+ * @returns {Promise<boolean>} true nếu đã đăng nhập, false nếu chưa đăng nhập
+ */
+export async function requireAuth() {
+  const isAuth = await isAuthenticated();
+  if (!isAuth) {
+    // Chuyển hướng đến trang đăng nhập
+    window.location.href = '/login';
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Kiểm tra xem người dùng đã đăng nhập chưa, nếu chưa thì hiển thị thông báo
+ * @returns {Promise<boolean>} true nếu đã đăng nhập, false nếu chưa đăng nhập
+ */
+export async function checkAuth() {
+  const isAuth = await isAuthenticated();
+  if (!isAuth) {
+    // Hiển thị thông báo yêu cầu đăng nhập
+    alert('Vui lòng đăng nhập để sử dụng tính năng này');
+    return false;
+  }
+  return true;
+}
