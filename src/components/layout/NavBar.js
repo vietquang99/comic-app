@@ -1,29 +1,85 @@
 "use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { Search, Menu, X, BookOpen, User, Moon, Sun } from 'lucide-react';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Search, Menu, X, BookOpen, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useTheme } from 'next-themes';
+import { useTheme } from "next-themes";
+
+// Tách riêng component ThemeToggle để xử lý vấn đề hydration
+function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+    >
+      {/* Chỉ render placeholder trống cho cả server và client ban đầu */}
+      <div className="h-5 w-5" suppressHydrationWarning>
+        {mounted &&
+          (resolvedTheme === "dark" ? (
+            // Import động icon để tránh lỗi hydration
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="4"></circle>
+              <path d="M12 2v2"></path>
+              <path d="M12 20v2"></path>
+              <path d="m4.93 4.93 1.41 1.41"></path>
+              <path d="m17.66 17.66 1.41 1.41"></path>
+              <path d="M2 12h2"></path>
+              <path d="M20 12h2"></path>
+              <path d="m6.34 17.66-1.41 1.41"></path>
+              <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+            </svg>
+          ))}
+      </div>
+    </Button>
+  );
+}
 
 export default function NavBar() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { theme, setTheme } = useTheme();
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
 
   const navItems = [
-    { name: 'Trang chủ', href: '/' },
-    { name: 'Truyện Hot', href: '/hot' },
-    { name: 'Mới cập nhật', href: '/updated' },
-    { name: 'Thể loại', href: '/genres' },
-    { name: 'Xếp hạng', href: '/rankings' },
+    { name: "Trang chủ", href: "/" },
+    { name: "Truyện Hot", href: "/hot" },
+    { name: "Mới cập nhật", href: "/updated" },
+    { name: "Thể loại", href: "/genres" },
+    { name: "Xếp hạng", href: "/rankings" },
   ];
 
   return (
@@ -42,7 +98,7 @@ export default function NavBar() {
               key={item.name}
               href={item.href}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === item.href ? 'text-primary' : 'text-foreground/80'
+                pathname === item.href ? "text-primary" : "text-foreground/80"
               }`}
             >
               {item.name}
@@ -62,21 +118,27 @@ export default function NavBar() {
                   className="w-64 mr-2"
                   autoFocus
                 />
-                <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(false)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsSearchOpen(false)}
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
-              <Button variant="ghost" size="icon" onClick={() => setIsSearchOpen(true)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSearchOpen(true)}
+              >
                 <Search className="h-5 w-5" />
               </Button>
             )}
           </div>
 
-          {/* Theme Toggle */}
-          <Button variant="ghost" size="icon" onClick={toggleTheme}>
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
+          {/* Theme Toggle - Sử dụng component riêng */}
+          <ThemeToggle />
 
           {/* User */}
           <Button variant="ghost" size="icon">
@@ -84,8 +146,17 @@ export default function NavBar() {
           </Button>
 
           {/* Mobile Menu Button */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>
@@ -109,7 +180,9 @@ export default function NavBar() {
                   key={item.name}
                   href={item.href}
                   className={`text-sm font-medium px-3 py-2 rounded-md transition-colors hover:bg-muted ${
-                    pathname === item.href ? 'bg-primary/10 text-primary' : 'text-foreground'
+                    pathname === item.href
+                      ? "bg-primary/10 text-primary"
+                      : "text-foreground"
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -122,4 +195,4 @@ export default function NavBar() {
       )}
     </header>
   );
-} 
+}

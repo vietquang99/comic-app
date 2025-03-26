@@ -1,16 +1,28 @@
+/**
+ * Cấu hình API
+ */
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api',
-  TIMEOUT: 10000,
+  BASE_URL: "http://localhost:1337/api",
+  TIMEOUT: 10000, // 10 giây
+  MAX_RETRIES: 3,
+  CONTENT_TYPE: "application/json",
 };
 
+/**
+ * Cấu hình Authentication
+ */
 export const AUTH_CONFIG = {
-  TOKEN_KEY: 'authToken',
-  USER_KEY: 'currentUser',
-  TOKEN_EXPIRY: 24 * 60 * 60 * 1000, // 24 hours
+  TOKEN_KEY: "auth_token",
+  REFRESH_TOKEN_KEY: "refresh_token",
+  TOKEN_EXPIRY: 7 * 24 * 60 * 60 * 1000, // 7 ngày
 };
 
+/**
+ * Cấu hình hệ thống
+ */
 export const APP_CONFIG = {
-  APP_NAME: 'Comic App',
-  APP_DESCRIPTION: 'Ứng dụng đọc truyện tranh online',
-  APP_VERSION: '1.0.0',
-}; 
+  SITE_NAME: "Comic App",
+  DESCRIPTION: "Ứng dụng đọc truyện tranh",
+  PAGINATION_LIMIT: 10,
+  IMAGE_PLACEHOLDER: "/images/placeholder.png",
+};

@@ -1,16 +1,33 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ComicCard from '@/components/comics/ComicCard';
-import ComicCardSkeleton from '@/components/comics/ComicCardSkeleton';
+import ComicCard from "@/components/comics/ComicCard";
+import ComicCardSkeleton from "@/components/comics/ComicCardSkeleton";
+import Link from "next/link";
+import { useInView } from "react-intersection-observer";
 
 export default function FeaturedComics({ comics }) {
+  const [isLoading, setIsLoading] = useState(true);
   const scrollContainerRef = useRef(null);
   const [showLeftButton, setShowLeftButton] = useState(false);
   const [showRightButton, setShowRightButton] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const { ref: inViewRef, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  // Hiệu ứng skeleton loading ngắn
+  useEffect(() => {
+    if (inView) {
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 600); // Giảm xuống 600ms để tăng hiệu suất
+
+      return () => clearTimeout(timer);
+    }
+  }, [inView]);
 
   const checkScrollButtons = () => {
     const container = scrollContainerRef.current;
@@ -26,21 +43,16 @@ export default function FeaturedComics({ comics }) {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    container.addEventListener('scroll', checkScrollButtons);
+    container.addEventListener("scroll", checkScrollButtons);
     checkScrollButtons();
 
+    // Kiểm tra buttons khi kích thước cửa sổ thay đổi
+    window.addEventListener("resize", checkScrollButtons);
+
     return () => {
-      container.removeEventListener('scroll', checkScrollButtons);
+      container.removeEventListener("scroll", checkScrollButtons);
+      window.removeEventListener("resize", checkScrollButtons);
     };
-  }, []);
-
-  useEffect(() => {
-    // Giả lập thời gian loading
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
   }, []);
 
   const scroll = (direction) => {
@@ -50,49 +62,54 @@ export default function FeaturedComics({ comics }) {
     const scrollAmount = container.clientWidth * 0.8;
     container.scrollBy({
       left: direction * scrollAmount,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
   return (
-    <section className="py-4">
+    <section className="py-4" ref={inViewRef}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-2">
             <TrendingUp className="h-5 w-5 text-primary" />
             <h2 className="text-2xl font-bold">Truyện Nổi Bật</h2>
           </div>
-          <Button variant="outline" size="sm" className="hidden sm:flex">
-            Xem tất cả
-          </Button>
+          <Link href="/comics?featured=true">
+            <Button variant="outline" size="sm" className="hidden sm:flex">
+              Xem tất cả
+            </Button>
+          </Link>
         </div>
-        
+
         <div className="relative">
           <div
             ref={scrollContainerRef}
             className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
           >
-            {isLoading ? (
-              // Hiển thị skeleton khi đang loading
-              Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="flex-none w-[160px] md:w-[180px]">
-                  <ComicCardSkeleton />
-                </div>
-              ))
-            ) : (
-              // Hiển thị nội dung thật
-              comics.map((comic, index) => (
-                <div key={comic.id} className="flex-none w-[160px] md:w-[180px]">
-                  <ComicCard 
-                    comic={comic} 
-                    showBadge={index < 3} 
-                  />
-                </div>
-              ))
-            )}
+            {isLoading
+              ? // Hiển thị skeleton khi đang loading
+                Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="flex-none w-[160px] md:w-[180px]">
+                    <ComicCardSkeleton />
+                  </div>
+                ))
+              : // Hiển thị nội dung thật
+                comics.map((comic, index) => (
+                  <div
+                    key={comic.id}
+                    className="flex-none w-[160px] md:w-[180px]"
+                  >
+                    <ComicCard
+                      comic={comic}
+                      showBadge={index < 3}
+                      priority={index < 4} // Chỉ ưu tiên tải 4 ảnh đầu tiên
+                      skipSkeleton={true} // Bỏ qua skeleton trong ComicCard vì đã có skeleton ở đây
+                    />
+                  </div>
+                ))}
           </div>
-          
-          {!isLoading && showLeftButton && (
+
+          {showLeftButton && (
             <Button
               variant="outline"
               size="icon"
@@ -102,8 +119,8 @@ export default function FeaturedComics({ comics }) {
               <ChevronLeft className="h-5 w-5" />
             </Button>
           )}
-          
-          {!isLoading && showRightButton && (
+
+          {showRightButton && (
             <Button
               variant="outline"
               size="icon"
@@ -114,13 +131,15 @@ export default function FeaturedComics({ comics }) {
             </Button>
           )}
         </div>
-        
+
         <div className="mt-6 flex justify-center md:hidden">
-          <Button variant="outline" size="sm">
-            Xem tất cả
-          </Button>
+          <Link href="/comics?featured=true">
+            <Button variant="outline" size="sm">
+              Xem tất cả
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
   );
-} 
+}

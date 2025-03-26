@@ -1,0 +1,13 @@
+// Thông tin dự án Comic App
+// Dự án này là một ứng dụng đọc truyện tranh trực tuyến
+// Sử dụng Next.js, React, và Tailwind CSS
+
+// Cấu trúc dự án:
+// src/
+//   - app/ (Routing và pages)
+//   - components/ (UI components)
+//   - constants/ (Dữ liệu hằng số) 
+//   - services/ (API và services)
+//   - lib/ (Thư viện và utilities)
+
+// Nhiệm vụ hiện tại: Tạo trang chi tiết truyện tranh 

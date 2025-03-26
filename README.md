@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Comic App - Ứng dụng đọc truyện tranh
 
-## Getting Started
+Ứng dụng web đọc truyện tranh được xây dựng bằng Next.js, React và Tailwind CSS, với backend sử dụng Supabase.
 
-First, run the development server:
+## Tính năng
+
+- 🎨 Giao diện đẹp, thân thiện với người dùng
+- 📱 Responsive trên mọi thiết bị
+- 📚 Duyệt và tìm kiếm truyện
+- 📖 Đọc truyện theo chương
+- 📝 Bình luận và đánh giá truyện
+- 🔖 Đánh dấu truyện yêu thích
+- 🚀 Tải nhanh với Next.js App Router
+- 🌙 Hỗ trợ chế độ tối
+
+## Cài đặt
+
+### Yêu cầu
+
+- Node.js 16.8.0 trở lên
+- npm hoặc yarn
+- Tài khoản Supabase (miễn phí)
+
+### Bước 1: Clone dự án
+
+```bash
+git clone https://github.com/yourusername/comic-app.git
+cd comic-app
+```
+
+### Bước 2: Cài đặt dependencies
+
+```bash
+npm install
+# hoặc
+yarn install
+```
+
+### Bước 3: Thiết lập Supabase
+
+1. Đăng ký tài khoản tại [Supabase](https://supabase.com)
+2. Tạo project mới
+3. Thiết lập cơ sở dữ liệu bằng cách:
+   - Vào SQL Editor trong Dashboard
+   - Dán nội dung từ file `scripts/setup-supabase.sql` và chạy
+4. Tạo file `.env.local` và thêm thông tin kết nối Supabase:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+Chi tiết hướng dẫn cài đặt Supabase có thể được tìm thấy trong tài liệu [`docs/supabase-setup.md`](docs/supabase-setup.md).
+
+### Bước 4: Chạy ứng dụng
 
 ```bash
 npm run dev
-# or
+# hoặc
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ứng dụng sẽ khởi chạy tại `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Cấu trúc dự án
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+comic-app/
+├── public/           # Tệp tĩnh và hình ảnh
+├── src/
+│   ├── app/          # Routing và pages
+│   ├── components/   # UI components
+│   ├── constants/    # Dữ liệu hằng số
+│   ├── lib/          # Thư viện và utilities
+│   └── services/     # API và services
+├── scripts/          # Scripts hỗ trợ
+└── docs/             # Tài liệu
+```
 
-## Learn More
+## Chuyển đổi từ Mock Data sang Supabase
 
-To learn more about Next.js, take a look at the following resources:
+Ứng dụng ban đầu sử dụng mock data để phát triển. Để chuyển sang dữ liệu thực từ Supabase:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Đảm bảo bạn đã thiết lập Supabase như hướng dẫn ở trên
+2. Các service trong `src/services/` đã được cấu hình để sử dụng Supabase theo mặc định
+3. Nếu bạn muốn quay lại dữ liệu mock, hãy thêm tham số `useMockData: true` trong các hàm service
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Ví dụ:
 
-## Deploy on Vercel
+```javascript
+// Sử dụng Supabase
+const comics = await getUpdatedComics();
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+// Sử dụng mock data
+const comics = await getUpdatedComics(8, true);
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Tài liệu
+
+- [Cấu trúc cơ sở dữ liệu](docs/database-schema.md)
+- [Thiết lập Supabase](docs/supabase-setup.md)
+
+## Đóng góp
+
+Vui lòng tham khảo [CONTRIBUTING.md](CONTRIBUTING.md) để biết cách đóng góp vào dự án.
