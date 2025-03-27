@@ -101,29 +101,25 @@ export const getComic = unstable_cache(
  * @param {boolean} useMockData - Sử dụng dữ liệu mock nếu true
  * @returns {Promise<Array>} Danh sách truyện nổi bật
  */
-export const getFeaturedComics = unstable_cache(
-  async (limit = 8, useMockData = false) => {
-    if (useMockData) {
-      return mockComics.featured.slice(0, limit);
-    }
+export async function getFeaturedComics(limit = 8, useMockData = false) {
+  if (useMockData) {
+    return mockComics.featured.slice(0, limit);
+  }
 
-    try {
-      // Lấy dữ liệu từ Supabase
-      const data = await fetchData("comics", {
-        filters: [{ column: "is_featured", operator: "eq", value: true }],
-        limit,
-        order: { column: "updated_at", ascending: false },
-      });
-      return data;
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách truyện nổi bật:", error);
-      // Fallback về dữ liệu mock nếu có lỗi
-      return mockComics.featured.slice(0, limit);
-    }
-  },
-  ["getFeaturedComics"],
-  { tags: [CACHE_TAGS.FEATURED_COMICS], revalidate: 3600 } // Cache 1 giờ
-);
+  try {
+    // Lấy dữ liệu từ Supabase
+    const data = await fetchData("comics", {
+      filters: [{ column: "is_featured", operator: "eq", value: true }],
+      limit,
+      order: { column: "updated_at", ascending: false },
+    });
+    return data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách truyện nổi bật:", error);
+    // Fallback về dữ liệu mock nếu có lỗi
+    return mockComics.featured.slice(0, limit);
+  }
+}
 
 /**
  * Lấy danh sách các truyện mới cập nhật từ Supabase
@@ -131,28 +127,24 @@ export const getFeaturedComics = unstable_cache(
  * @param {boolean} useMockData - Sử dụng dữ liệu mock nếu true
  * @returns {Promise<Array>} Danh sách truyện mới cập nhật
  */
-export const getUpdatedComics = unstable_cache(
-  async (limit = 12, useMockData = false) => {
-    if (useMockData) {
-      return mockComics.updated.slice(0, limit);
-    }
+export async function getUpdatedComics(limit = 12, useMockData = false) {
+  if (useMockData) {
+    return mockComics.updated.slice(0, limit);
+  }
 
-    try {
-      // Lấy dữ liệu từ Supabase
-      const data = await fetchData("comics", {
-        limit,
-        order: { column: "updated_at", ascending: false },
-      });
-      return data;
-    } catch (error) {
-      console.error("Lỗi khi lấy danh sách truyện mới cập nhật:", error);
-      // Fallback về dữ liệu mock nếu có lỗi
-      return mockComics.updated.slice(0, limit);
-    }
-  },
-  ["getUpdatedComics"],
-  { tags: [CACHE_TAGS.UPDATED_COMICS], revalidate: 3600 } // Cache 1 giờ
-);
+  try {
+    // Lấy dữ liệu từ Supabase
+    const data = await fetchData("comics", {
+      limit,
+      order: { column: "updated_at", ascending: false },
+    });
+    return data;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách truyện mới cập nhật:", error);
+    // Fallback về dữ liệu mock nếu có lỗi
+    return mockComics.updated.slice(0, limit);
+  }
+}
 
 /**
  * Tìm kiếm truyện theo tên từ Supabase

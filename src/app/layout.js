@@ -18,12 +18,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL("http://localhost:3000"),
   title: {
     default: "Comic App",
     template: "%s | Comic App",
   },
   description: "Nền tảng đọc truyện tranh online miễn phí",
-  keywords: ["truyện tranh", "manga", "manhwa", "manhua", "comic", "đọc truyện online"],
+  keywords: [
+    "truyện tranh",
+    "manga",
+    "manhwa",
+    "manhua",
+    "comic",
+    "đọc truyện online",
+  ],
 };
 
 export default function RootLayout({ children }) {

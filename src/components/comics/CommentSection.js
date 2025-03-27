@@ -3,6 +3,16 @@
 import { useState } from "react";
 import { addComment } from "@/services/comic";
 import { FaStar, FaRegStar } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function CommentSection({ comicId, initialComments = [] }) {
   const [newComment, setNewComment] = useState("");
@@ -95,97 +105,112 @@ export default function CommentSection({ comicId, initialComments = [] }) {
   };
 
   return (
-    <div className="rounded-lg border border-gray-200 p-6 bg-white dark:bg-gray-800 dark:border-gray-700">
-      <h3 className="text-xl font-bold mb-4">Bình luận & Đánh giá</h3>
-
-      {/* Hiển thị xếp hạng trung bình */}
-      <div className="mb-6">
-        <div className="flex items-center mb-2">
-          <div className="flex">
-            {renderStars(
-              localComments.length > 0
-                ? Math.round(
-                    localComments.reduce(
-                      (acc, comment) => acc + comment.rating,
-                      0
-                    ) / localComments.length
-                  )
-                : 0
-            )}
-          </div>
-          <span className="ml-2 text-sm text-gray-500">
-            ({localComments.length} đánh giá)
-          </span>
-        </div>
-      </div>
-
-      {/* Form thêm bình luận */}
-      <form onSubmit={handleSubmitComment} className="mb-6">
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-2">
-            Đánh giá của bạn
-          </label>
-          <div className="flex">{renderStars(rating, true)}</div>
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="comment" className="block text-sm font-medium mb-2">
-            Bình luận của bạn
-          </label>
-          <textarea
-            id="comment"
-            rows="4"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-            placeholder="Chia sẻ ý kiến của bạn về truyện này..."
-          ></textarea>
-        </div>
-
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {success && <div className="text-green-500 mb-4">{success}</div>}
-
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 ${
-            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          {isSubmitting ? "Đang gửi..." : "Gửi bình luận"}
-        </button>
-      </form>
-
-      {/* Danh sách bình luận */}
-      <div className="space-y-4">
-        <h4 className="font-medium">
-          Tất cả bình luận ({localComments.length})
-        </h4>
-
-        {localComments.length === 0 ? (
-          <p className="text-gray-500 dark:text-gray-400">
-            Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
-          </p>
-        ) : (
-          localComments.map((comment, index) => (
-            <div
-              key={comment.id || index}
-              className="p-4 border border-gray-200 rounded-lg dark:border-gray-700"
-            >
-              <div className="flex justify-between items-start">
-                <div className="font-medium">
-                  {comment.user_name || "Người dùng ẩn danh"}
-                </div>
-                <div className="flex">{renderStars(comment.rating)}</div>
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {new Date(comment.created_at).toLocaleDateString("vi-VN")}
-              </div>
-              <p className="mt-2">{comment.content}</p>
+    <Card>
+      <CardHeader>
+        <CardTitle>Bình luận & Đánh giá</CardTitle>
+        <CardDescription>
+          {localComments.length > 0
+            ? `${localComments.length} đánh giá`
+            : "Chưa có đánh giá nào"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {/* Hiển thị xếp hạng trung bình */}
+        <div className="mb-6">
+          <div className="flex items-center">
+            <div className="flex">
+              {renderStars(
+                localComments.length > 0
+                  ? Math.round(
+                      localComments.reduce(
+                        (acc, comment) => acc + comment.rating,
+                        0
+                      ) / localComments.length
+                    )
+                  : 0
+              )}
             </div>
-          ))
-        )}
-      </div>
-    </div>
+            <span className="ml-2 text-sm text-muted-foreground">
+              ({localComments.length} đánh giá)
+            </span>
+          </div>
+        </div>
+
+        {/* Form thêm bình luận */}
+        <form onSubmit={handleSubmitComment} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Đánh giá của bạn
+            </label>
+            <div className="flex">{renderStars(rating, true)}</div>
+          </div>
+
+          <div>
+            <label htmlFor="comment" className="block text-sm font-medium mb-2">
+              Bình luận của bạn
+            </label>
+            <Textarea
+              id="comment"
+              rows="4"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Chia sẻ ý kiến của bạn về truyện này..."
+            />
+          </div>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {success && (
+            <Alert
+              variant="success"
+              className="bg-green-50 text-green-700 border-green-200"
+            >
+              <AlertDescription>{success}</AlertDescription>
+            </Alert>
+          )}
+
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+            {isSubmitting ? "Đang gửi..." : "Gửi bình luận"}
+          </Button>
+        </form>
+
+        {/* Danh sách bình luận */}
+        <div className="mt-8 space-y-4">
+          <h4 className="font-medium">
+            Tất cả bình luận ({localComments.length})
+          </h4>
+
+          {localComments.length === 0 ? (
+            <p className="text-muted-foreground">
+              Chưa có bình luận nào. Hãy là người đầu tiên bình luận!
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {localComments.map((comment, index) => (
+                <div
+                  key={comment.id || index}
+                  className="p-4 border rounded-lg bg-muted/40"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="font-medium">
+                      {comment.user_name || "Người dùng ẩn danh"}
+                    </div>
+                    <div className="flex">{renderStars(comment.rating)}</div>
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {new Date(comment.created_at).toLocaleDateString("vi-VN")}
+                  </div>
+                  <p className="mt-2">{comment.content}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

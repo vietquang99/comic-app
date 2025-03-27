@@ -1,7 +1,8 @@
 import { getComic } from "@/services/comic";
 
 export async function generateMetadata({ params }) {
-  const { id } = params;
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
   let comic = null;
 
   try {
