@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { BookOpen, Eye, Star, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";

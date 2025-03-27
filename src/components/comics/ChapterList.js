@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -18,11 +20,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-export default function ChapterList({ comic }) {
+export default function ChapterList({ chapters = [], comicId }) {
   const [sortOrder, setSortOrder] = useState("desc"); // "asc" hoặc "desc"
   const [searchTerm, setSearchTerm] = useState("");
 
-  if (!comic || !comic.chapters || comic.chapters.length === 0) {
+  if (!chapters || chapters.length === 0) {
     return (
       <Card className="w-full">
         <CardHeader>
@@ -40,7 +42,7 @@ export default function ChapterList({ comic }) {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
-  const filteredAndSortedChapters = [...comic.chapters]
+  const filteredAndSortedChapters = [...chapters]
     .filter((chapter) => {
       if (!searchTerm.trim()) return true;
       return (
@@ -64,7 +66,7 @@ export default function ChapterList({ comic }) {
           Danh sách Chapter
         </CardTitle>
         <CardDescription>
-          {comic.chapters.length} chapter{comic.chapters.length > 1 ? "s" : ""}
+          {chapters.length} chapter{chapters.length > 1 ? "s" : ""}
         </CardDescription>
       </CardHeader>
 
@@ -98,7 +100,7 @@ export default function ChapterList({ comic }) {
             filteredAndSortedChapters.map((chapter) => (
               <Link
                 key={chapter.id}
-                href={`/comics/${comic.id}/chapters/${chapter.id}`}
+                href={`/comics/${comicId}/chapters/${chapter.id}`}
                 className="flex flex-col sm:flex-row sm:items-center gap-2 py-3 hover:bg-muted/50 px-2 -mx-2 rounded-md transition-colors"
               >
                 <div className="font-medium">

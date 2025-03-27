@@ -4,13 +4,13 @@ import { useState } from "react";
 import { addComment } from "@/services/comic";
 import { FaStar, FaRegStar } from "react-icons/fa";
 
-export default function CommentSection({ comicId, comments = [] }) {
+export default function CommentSection({ comicId, initialComments = [] }) {
   const [newComment, setNewComment] = useState("");
   const [rating, setRating] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [localComments, setLocalComments] = useState(comments);
+  const [localComments, setLocalComments] = useState(initialComments);
 
   // Xử lý thay đổi rating
   const handleRatingChange = (newRating) => {

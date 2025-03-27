@@ -6,14 +6,26 @@ import { getFeaturedComics, getUpdatedComics } from "@/services/comic";
 export const revalidate = 3600; // revalidate mỗi giờ
 
 export default async function Home() {
-  // Lấy dữ liệu song song để tăng tốc
-  const [featuredComics, updatedComics] = await Promise.all([
-    getFeaturedComics(8),
-    getUpdatedComics(12),
-  ]);
+  let featuredComics = [];
+  let updatedComics = [];
+
+  try {
+    // Lấy dữ liệu song song để tăng tốc
+    [featuredComics, updatedComics] = await Promise.all([
+      getFeaturedComics(8, false),
+      getUpdatedComics(12, false),
+    ]);
+  } catch (error) {
+    console.error("Lỗi khi tải dữ liệu từ API:", error);
+    // Nếu có lỗi, sử dụng dữ liệu mock
+    [featuredComics, updatedComics] = await Promise.all([
+      getFeaturedComics(8, true),
+      getUpdatedComics(12, true),
+    ]);
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8 pt-0 space-y-8">
+    <div className="container mx-auto px-4 py-8 pt-0">
       <FeaturedComics comics={featuredComics} />
       <UpdatedComics comics={updatedComics} />
     </div>

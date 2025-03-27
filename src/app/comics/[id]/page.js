@@ -1,23 +1,28 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { getComic, incrementViewCount } from "@/services/comic";
 import Link from "next/link";
+import { getComic, incrementViewCount } from "@/services/comic";
 
 import ComicHero from "@/components/comics/ComicHero";
 import ComicInfo from "@/components/comics/ComicInfo";
 import ChapterList from "@/components/comics/ChapterList";
 import CommentSection from "@/components/comics/CommentSection";
-import ComicDetailSkeleton from "@/components/comics/ComicDetailSkeleton";
 
 export default async function ComicDetailPage({ params }) {
   const { id } = params;
+  let comic = null;
 
   try {
-    // Lấy thông tin truyện từ API (hoặc mock data)
-    const comic = await getComic(id);
+    // Lấy thông tin truyện từ API
+    comic = await getComic(id, false);
 
-    // Nếu không tìm thấy truyện, hiển thị trang lỗi
+    // Nếu không tìm thấy truyện, thử lấy từ mock data
+    if (!comic) {
+      console.warn(
+        `Không tìm thấy truyện với ID ${id} trong API, thử dùng mock data`
+      );
+      comic = await getComic(id, true);
+    }
+
+    // Nếu vẫn không tìm thấy, hiển thị trang lỗi
     if (!comic) {
       return (
         <div className="container mx-auto px-4 py-8">
@@ -37,10 +42,14 @@ export default async function ComicDetailPage({ params }) {
       );
     }
 
-    // Tăng số lượt xem - chỉ thực hiện khi trong môi trường sản xuất
+    // Tăng số lượt xem - vì đây là Server Component, chúng ta có thể sử dụng await
     if (process.env.NODE_ENV === "production") {
-      // Sử dụng Promise.allSettled để không chặn render nếu có lỗi
-      Promise.allSettled([incrementViewCount(id)]);
+      try {
+        await incrementViewCount(id);
+      } catch (error) {
+        console.error("Lỗi khi tăng lượt xem:", error);
+        // Tiếp tục xử lý ngay cả khi lỗi tăng lượt xem
+      }
     }
 
     return (
@@ -54,19 +63,56 @@ export default async function ComicDetailPage({ params }) {
             {/* Main Content - 2/3 width on large screens */}
             <div className="lg:col-span-2">
               <ComicInfo comic={comic} />
-              <ChapterList chapters={comic.chapters} />
+              <ChapterList chapters={comic.chapters} comicId={id} />
             </div>
 
             {/* Sidebar - 1/3 width on large screens */}
             <div>
-              <CommentSection comicId={id} comments={comic.comments} />
+              <CommentSection comicId={id} initialComments={comic.comments} />
             </div>
           </div>
         </div>
       </div>
     );
   } catch (error) {
-    console.error("Lỗi khi tải dữ liệu truyện:", error);
+    console.error("Lỗi khi tải dữ liệu truyện từ API:", error);
+
+    try {
+      // Thử lấy dữ liệu từ mock nếu API bị lỗi
+      comic = await getComic(id, true);
+
+      if (comic) {
+        return (
+          <div className="comic-detail-page">
+            {/* Hero Section */}
+            <ComicHero comic={comic} />
+
+            {/* Content */}
+            <div className="container mx-auto px-4 py-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Content - 2/3 width on large screens */}
+                <div className="lg:col-span-2">
+                  <ComicInfo comic={comic} />
+                  <ChapterList chapters={comic.chapters} comicId={id} />
+                </div>
+
+                {/* Sidebar - 1/3 width on large screens */}
+                <div>
+                  <CommentSection
+                    comicId={id}
+                    initialComments={comic.comments}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    } catch (mockError) {
+      console.error("Lỗi khi tải dữ liệu truyện từ mock data:", mockError);
+    }
+
+    // Nếu cả API và mock data đều lỗi
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-red-500">Đã xảy ra lỗi!</h1>

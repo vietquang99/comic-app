@@ -89,7 +89,10 @@ export const getComic = unstable_cache(
     }
   },
   ["getComic"],
-  { revalidate: 3600 } // Cache 1 giờ
+  {
+    tags: ["comics", "comic-details"],
+    revalidate: 3600,
+  } // Cache 1 giờ với tags cố định
 );
 
 /**

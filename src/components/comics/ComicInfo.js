@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { PenLine, CalendarDays } from "lucide-react";
 
