@@ -56,3 +56,26 @@ comic-app/
 - **UI Components**: shadcn/ui (dựa trên Radix UI)
 - **Icons**: Lucide React
 - **Theming**: next-themes (hỗ trợ dark mode)
+
+## Caching và Quản lý dữ liệu
+
+### Next.js Cache
+
+- **unstable_cache**: Sử dụng để cache các API calls và giảm tải cho server
+  - Cấu hình với tags và thời gian revalidate
+  - Yêu cầu các tag phải là chuỗi tĩnh, không hỗ trợ callback function
+  - Ví dụ: `{ tags: ["comics", "comic-details"], revalidate: 3600 }`
+
+### Xử lý lỗi và dự phòng
+
+- **Cơ chế Fallback với Mock Data**:
+
+  - Mọi service function đều có tham số `useMockData` để chuyển đổi nguồn dữ liệu
+  - Mock data được lưu tại `src/constants/mock-data.js`
+  - Khi API gặp lỗi, hệ thống tự động sử dụng dữ liệu mock
+  - Đảm bảo ứng dụng vẫn hoạt động khi API không khả dụng
+
+- **Mô hình Try-Catch**:
+  - Mọi API call được bọc trong try-catch blocks
+  - Lỗi được log và xử lý gracefully
+  - Người dùng không thấy lỗi kỹ thuật, chỉ thấy dữ liệu (dù là mock)

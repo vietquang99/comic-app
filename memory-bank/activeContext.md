@@ -6,14 +6,15 @@
   - FeaturedComics: Hiển thị truyện nổi bật
   - UpdatedComics: Hiển thị truyện mới cập nhật
 - Đã tạo các component UI cơ bản (ComicCard, ComicCardSkeleton)
-- Đang phát triển trang chi tiết truyện
+- Đã hoàn thành trang chi tiết truyện
+- Đã tích hợp cơ chế dự phòng sử dụng dữ liệu mock khi API bị lỗi
+- Đã sửa lỗi cấu hình cache không hợp lệ trong services/comic.js
 
 ## Trọng tâm hiện tại
 
-- Tạo trang chi tiết truyện với đầy đủ thông tin và chức năng
-- Hiển thị thông tin chi tiết truyện (tiêu đề, mô tả, tác giả, thể loại)
-- Hiển thị danh sách chapter
-- Thêm các chức năng tương tác (đọc, theo dõi, đánh giá)
+- Hoàn thiện cơ chế dự phòng với dữ liệu mock
+- Cải thiện hiệu suất ứng dụng với việc sử dụng cache hợp lý
+- Chuẩn bị phát triển trang đọc chapter
 
 ## Thiết kế UI Trang Chi Tiết Truyện
 
@@ -40,16 +41,27 @@
    - Tablet: 640px - 1024px
    - Desktop: > 1024px
 
-## Kế hoạch triển khai
+## Phát triển và sửa lỗi gần đây
 
-1. Tạo route `/comics/[id]`
-2. Triển khai các components đã thiết kế
-3. Tạo service để lấy dữ liệu truyện từ mock data
-4. Thêm skeleton loading và xử lý state
-5. Tối ưu hóa responsive và hiệu suất
+1. **Cơ chế dự phòng dữ liệu mock**:
+
+   - Đã triển khai logic fallback để sử dụng mock data khi API bị lỗi
+   - Áp dụng cho trang chủ, trang chi tiết truyện và các tính năng khác
+   - Đảm bảo trải nghiệm người dùng liên tục ngay cả khi có lỗi kết nối
+
+2. **Sửa lỗi unstable_cache**:
+   - Đã sửa lỗi trong hàm getComic khi sử dụng tag callback function
+   - Thay thế bằng các tag chuỗi tĩnh để đảm bảo hoạt động ổn định
+   - Tối ưu các cấu hình cache khác để cải thiện hiệu suất
+
+## Kế hoạch triển khai tiếp theo
+
+1. Phát triển trang đọc chapter
+2. Tối ưu hóa hiệu suất loading ứng dụng
+3. Thêm các tính năng tương tác người dùng
 
 ## Thách thức hiện tại
 
-- Thiết kế UI hấp dẫn và thân thiện người dùng
-- Hiển thị dữ liệu phù hợp với cả desktop và mobile
-- Tối ưu hóa hiệu suất tải trang
+- Đảm bảo dữ liệu mock đủ phong phú để thay thế khi API bị lỗi
+- Cân bằng hiệu suất cache và tính cập nhật của dữ liệu
+- Duy trì trải nghiệm người dùng tốt trong mọi tình huống
